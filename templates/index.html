@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VARTABARAN - Modern News Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            light: '#3b82f6',
+                            dark: '#1e40af'
+                        },
+                        secondary: {
+                            light: '#64748b',
+                            dark: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .article-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        #navMenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        #navMenu.open {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- App Container -->
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Navigation Bar -->
+        <nav class="bg-white dark:bg-gray-800 shadow-md py-4 px-6 sticky top-0 z-50">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="text-2xl font-bold text-primary-light dark:text-primary-dark">VARTABARAN</a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="front.html" class="text-gray-700 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary-dark">Home</a>
+                        <a href="Categories.html" class="text-gray-700 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary-dark">Categories</a>
+                        <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary-dark">Trending</a>
+                        <a href="writers.html" class="text-gray-700 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary-dark">Writers</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative hidden md:block">
+                        <input type="text" placeholder="Search articles..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark w-40 md:w-64">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    
+                    <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    
+                    <div id="authButtons" class="hidden md:flex space-x-2">
+                        <a href="login.html" class="px-4 py-2 rounded-md bg-primary-light dark:bg-primary-dark text-white hover:bg-opacity-90 transition duration-200">Login</a>
+                        <a href="signup.html" class="px-4 py-2 rounded-md border border-primary-light dark:border-primary-dark text-primary-light dark:text-primary-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200">Sign Up</a>
+                    </div>
+                    
+                    <div id="userMenu" class="hidden relative">
+                        <button id="userButton" class="flex items-center space-x-2 focus:outline-none">
+                            <div class="w-8 h-8 rounded-full bg-primary-light dark:bg-primary-dark flex items-center justify-center text-white font-semibold">U</div>
+                            <span class="hidden md:inline text-gray-700 dark:text-gray-300">User  </span>
+                        </button>
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Profile</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Bookmarks</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Settings</a>
+                            <div class="border-t border-gray-200 dark:border-gray-700"></div>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Logout</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Mobile menu button -->
+                    <button id="mobileMenuButton" class="md:hidden p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="navMenu" class="md:hidden mt-4">
+                <div class="flex flex-col space-y-3 px-2">
+                    <input type="text" placeholder="Search articles..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark w-full">
+                    <a href="front.html" class="text-gray-700 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary-dark px-4 py-2">Home</a>
+                    <a href="Categories.html" class="text-gray-700 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary-dark px-4 py-2">Categories</a>
+                    <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary-dark px-4 py-2">Trending</a>
+                    <a href="writers.html" class="text-gray-700 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary-dark px-4 py-2">Writers</a>
+                    <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <a href="{{ url_for('login_page') }}"class="w-full mb-2 px-4 py-2 rounded-md bg-primary-light dark:bg-primary-dark text-white hover:bg-opacity-90 transition duration-200">Login</a>
+                        <a href="{{ url_for('signup_page') }}"class="w-full px-4 py-2 rounded-md border border-primary-light dark:border-primary-dark text-primary-light dark:text-primary-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200">Sign Up</a>
+
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <!-- Hero Section -->
+            <section class="mb-12">
+                <div class="bg-gradient-to-r from-primary-light to-blue-500 dark:from-primary-dark dark:to-blue-800 rounded-xl p-8 text-white">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Stay Informed with VARTABARAN</h1>
+                    <p class="text-xl mb-6">Your trusted source for the latest news and insights across various topics.</p>
+                    <button class="px-6 py-3 bg-white text-primary-light dark:text-primary-dark rounded-lg font-semibold hover:bg-opacity-90 transition duration-200">Explore Articles</button>
+                </div>
+            </section>
+
+            <!-- Categories -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Browse by Category</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <a href="#" class="category-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-2">
+                            <i class="fas fa-landmark text-blue-500 dark:text-blue-300"></i>
+                        </div>
+                        <span class="text-gray-700 dark:text-gray-300 font-medium">Politics</span>
+                    </a>
+                    <a href="#" class="category-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-2">
+                            <i class="fas fa-leaf text-green-500 dark:text-green-300"></i>
+                        </div>
+                        <span class="text-gray-700 dark:text-gray-300 font-medium">Environment</span>
+                    </a>
+                    <a href="#" class="category-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mb-2">
+                            <i class="fas fa-microchip text-purple-500 dark:text-purple-300"></i>
+                        </div>
+                        <span class="text-gray-700 dark:text-gray-300 font-medium">Technology</span>
+                    </a>
+                    <a href="#" class="category-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                        <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mb-2">
+                            <i class="fas fa-briefcase-medical text-yellow-500 dark:text-yellow-300"></i>
+                        </div>
+                        <span class="text-gray-700 dark:text-gray-300 font-medium">Health</span>
+                    </a>
+                    <a href="#" class="category-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                        <div class="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mb-2">
+                            <i class="fas fa-basketball-ball text-red-500 dark:text-red-300"></i>
+                        </div>
+                        <span class="text-gray-700 dark:text-gray-300 font-medium">Sports</span>
+                    </a>
+                    <a href="#" class="category-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                        <div class="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-full flex items-center justify-center mb-2">
+                            <i class="fas fa-film text-pink-500 dark:text-pink-300"></i>
+                        </div>
+                        <span class="text-gray-700 dark:text-gray-300 font-medium">Entertainment</span>
+                    </a>
+                </div>
+                <div class="mt-4 text-center">
+                    <a href="Categories.html" class="inline-flex items-center justify-center px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-md hover:bg-opacity-90 transition duration-200">View More</a>
+                </div>
+            </section>
+
+            <!-- Featured Writers -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Featured Writers</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold">JD</div>
+                        <div>
+                            <h3 class="font-medium text-gray-800 dark:text-white">John Doe</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Tech Journalist</p>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">JS</div>
+                        <div>
+                            <h3 class="font-medium text-gray-800 dark:text-white">Jane Smith</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Political Analyst</p>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">MD</div>
+                        <div>
+                            <h3 class="font-medium text-gray-800 dark:text-white">Mike Doe</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Sports Reporter</p>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">AD</div>
+                        <div>
+                            <h3 class="font-medium text-gray-800 dark:text-white">Alexa Doe</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Health Expert</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <a href="vartabaran_writers.html" class="inline-flex items-center justify-center px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-md hover:bg-opacity-90 transition duration-200">View All</a>
+                </div>
+            </section>
+
+            <!-- News Feed -->
+            <section>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Latest News</h2>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-1 bg-primary-light dark:bg-primary-dark text-white rounded-md">Latest</button>
+                        <button class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md">Popular</button>
+                        <button class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md">Trending</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Article Card 1 -->
+                    <div class="article-card bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://source.unsplash.com/random/600x400/?technology" alt="Article thumbnail" class="w-full h-48 object-cover">
+                            <div class="absolute top-2 right-2">
+                                <button class="p-2 bg-white dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="far fa-bookmark text-gray-600 dark:text-gray-300"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">Technology</span>
+                                <span class="text-xs text-gray-500 ml-2">5 min read</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">The Future of AI in Everyday Life</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Exploring how artificial intelligence is transforming our daily routines and what to expect in the coming years.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 mr-2"></div>
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">John Doe</span>
+                                </div>
+                                <span class="text-sm text-gray-500">2 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Article Card 2 -->
+                    <div class="article-card bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://source.unsplash.com/random/600x400/?politics" alt="Article thumbnail" class="w-full h-48 object-cover">
+                            <div class="absolute top-2 right-2">
+                                <button class="p-2 bg-white dark:bg-gray-

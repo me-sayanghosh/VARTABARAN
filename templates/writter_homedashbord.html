@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vartabaran - Fake News Detector</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+            --danger-color: #ff006e;
+            --success-color: #06d6a0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+        
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+        
+        .sidebar-item {
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-item:hover {
+            background-color: rgba(58, 134, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .post-card {
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .post-author {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .post-tags span {
+            background-color: rgba(58, 134, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+        
+        .action-btn {
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            margin-right: 8px;
+        }
+        
+        .like-btn {
+            background-color: rgba(6, 214, 160, 0.1);
+            color: var(--success-color);
+        }
+        
+        .comment-btn {
+            background-color: rgba(131, 56, 236, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .verify-btn {
+            background-color: rgba(58, 134, 255, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .flag-btn {
+            background-color: rgba(255, 0, 110, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .widget-card {
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        
+        .suggested-writer {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .suggested-writer:last-child {
+            border-bottom: none;
+        }
+        
+        .writer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
+        .trust-score {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .trust-score-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .chat-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.3);
+            cursor: pointer;
+            z-index: 1000;
+        }
+        
+        .chat-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .chat-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+        }
+        
+        .received {
+            align-self: flex-start;
+            background-color: #f1f1f1;
+            border-radius: 0 12px 12px 12px;
+            padding: 10px 15px;
+        }
+        
+        .sent {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 12px 0 12px 12px;
+            padding: 10px 15px;
+        }
+        
+        .verification-box {
+            background-color: rgba(6, 214, 160, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .verification-result {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .verification-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .verified {
+            color: var(--success-color);
+        }
+        
+        .fake {
+            color: var(--danger-color);
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                height: auto;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-shield-alt me-2"></i>Vartabaran
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form class="d-flex mx-auto" style="width: 50%;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for news, writers, or topics">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="#">
+                            <i class="fas fa-bell fa-lg"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="#">
+                            <i class="fas fa-envelope fa-lg"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                                5
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="rounded-circle" width="32" height="32">
+                            <span class="ms-2">John Doe</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Left Sidebar -->
+            <div class="col-lg-3 col-md-4 mb-4">
+                <div class="sidebar">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action sidebar-item active">
+                            <i class="fas fa-home me-2"></i>Home
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action sidebar-item" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                            <i class="fas fa-plus-circle me-2"></i>Create News Post
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action sidebar-item">
+                            <i class="fas fa-bookmark me-2"></i>Saved News
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action sidebar-item">
+                            <i class="fas fa-users me-2"></i>Connect with Writers
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action sidebar-item">
+                            <i class="fas fa-map-marker-alt me-2"></i>Location Groups
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action sidebar-item">
+                            <i class="fas fa-flag me-2"></i>Fake News Reports
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action sidebar-item">
+                            <i class="fas fa-cog me-2"></i>Settings
+                        </a>
+                    </div>
+                    
+                    <div class="widget-card mt-4">
+                        <h5><i class="fas fa-chart-line me-2"></i>Your Stats</h5>
+                        <div class="d-flex justify-content-between mt-3">
+                            <div class="text-center">
+                                <div class="h4">24</div>
+                                <small class="text-muted">Posts</small>
+                            </div>
+                            <div class="text-center">
+                                <div class="h4">156</div>
+                                <small class="text-muted">Followers</small>
+                            </div>
+                            <div class="text-center">
+                                <div class="h4">89%</div>
+                                <small class="text-muted">Trust Score</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-6 col-md-8 mb-4">
+                <!-- Create Post Card -->
+                <div class="card post-card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="rounded-circle me-3" width="48" height="48">
+                            <input type="text" class="form-control" placeholder="What's the news today?" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-image me-1"></i> Photo
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-link me-1"></i> Link
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-poll me-1"></i> Poll
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-map-marker-alt me-1"></i> Location
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Feed -->
+                <div class="card post-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="rounded-circle me-3" width="40" height="40">
+                                <div>
+                                    <div class="post-author">Sarah Johnson</div>
+                                    <small class="text-muted">2 hours ago · <i class="fas fa-globe-americas"></i></small>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#">Save post</a></li>
+                                    <li><a class="dropdown-item" href="#">Report post</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <p>Breaking: Scientists discover new species of deep-sea creatures in the Mariana Trench. The findings could revolutionize our understanding of marine biodiversity.</p>
+                        
+                        <img src="https://source.unsplash.com/random/800x400/?ocean,deep" alt="Post image" class="img-fluid rounded mb-3">
+                        
+                        <div class="post-tags mb-3">
+                            <span>#Science</span>
+                            <span>#MarineBiology</span>
+                            <span>#Discovery</span>
+                        </div>
+                        
+                        <div class="verification-box">
+                            <h6><i class="fas fa-check-circle verified me-2"></i>Verified by Vartabaran</h6>
+                            <p class="small">This news has been verified by 3 independent sources and our AI verification system.</p>
+                            <div class="verification-result">
+                                <i class="fas fa-check-circle verified verification-icon"></i>
+                                <div>
+                                    <div class="fw-bold">95% Confidence</div>
+                                    <small class="text-muted">Based on source reliability and cross-verification</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-3">
+                            <button class="btn action-btn like-btn">
+                                <i class="fas fa-thumbs-up me-1"></i> Like (24)
+                            </button>
+                            <button class="btn action-btn comment-btn">
+                                <i class="fas fa-comment me-1"></i> Comment (8)
+                            </button>
+                            <button class="btn action-btn verify-btn">
+                                <i class="fas fa-check-double me-1"></i> Verify
+                            </button>
+                            <button class="btn action-btn flag-btn">
+                                <i class="fas fa-flag me-1"></i> Flag
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card post-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Profile" class="rounded-circle me-3" width="40" height="40">
+                                <div>
+                                    <div class="post-author">Michael Chen</div>
+                                    <small class="text-muted">5 hours ago · <i class="fas fa-user-friends"></i></small>
+                                </div>
+                            </div>
+                            <div class="trust-score">
+                                <span class="badge bg-success">Trust Score: 92%</span>
+                                <span class="trust-score-badge">92</span>
+                            </div>
+                        </div>
+                        
+                        <p>Political Update: New legislation proposed that would significantly impact small businesses. Here's what you need to know...</p>
+                        
+                        <div class="post-tags mb-3">
+                            <span>#Politics</span>
+                            <span>#Business</span>
+                            <span>#Legislation</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-3">
+                            <button class="btn action-btn like-btn">
+                                <i class="fas fa-thumbs-up me-1"></i> Like (42)
+                            </button>
+                            <button class="btn action-btn comment-btn">
+                                <i class="fas fa-comment me-1"></i> Comment (15)
+                            </button>
+                            <button class="btn action-btn verify-btn">
+                                <i class="fas fa-check-double me-1"></i> Verify
+                            </button>
+                            <button class="btn action-btn flag-btn">
+                                <i class="fas fa-flag me-1"></i> Flag
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card post-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Profile" class="rounded-circle me-3" width="40" height="40">
+                                <div>
+                                    <div class="post-author">Emma Wilson</div>
+                                    <small class="text-muted">1 day ago · <i class="fas fa-globe-americas"></i></small>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#">Save post</a></li>
+                                    <li><a class="dropdown-item" href="#">Report post</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <p>Health Alert: Viral post claims drinking lemon water cures COVID-19. Our fact-checkers have verified this as false information.</p>
+                        
+                        <img src="https://source.unsplash.com/random/800x400/?lemon,water" alt="Post image" class="img-fluid rounded mb-3">
+                        
+                        <div class="post-tags mb-3">
+                            <span>#Health</span>
+                            <span>#FactCheck</span>
+                            <span>#COVID19</span>
+                        </div>
+                        
+                        <div class="verification-box">
+                            <h6><i class="fas fa-times-circle fake me-2"></i>Marked as Misinformation</h6>
+                            <p class="small">This claim has been debunked by medical experts and our verification system.</p>
+                            <div class="verification-result">
+                                <i class="fas fa-times-circle fake verification-icon"></i>
+                                <div>
+                                    <div class="fw-bold">98% Confidence</div>
+                                    <small class="text-muted">Based on medical research and expert analysis</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-3">
+                            <button class="btn action-btn like-btn">
+                                <i class="fas fa-thumbs-up me-1"></i> Like (7)
+                            </button>
+                            <button class="btn action-btn comment-btn">
+                                <i class="fas fa-comment me-1"></i> Comment (32)
+                            </button>
+                            <button class="btn action-btn verify-btn">
+                                <i class="fas fa-check-double me-1"></i> Verify
+                            </button>
+                            <button class="btn action-btn flag-btn">
+                                <i class="fas fa-flag me-1"></i> Flag
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="widget-card">
+                    <h5><i class="fas fa-user-plus me-2"></i>Suggested Writers</h5>
+                    <div class="suggested-writer">
+                        <img src="https://randomuser.me/api/portraits/men/11.jpg" alt="Writer" class="writer-avatar">
+                        <div>
+                            <div class="fw-bold">David Kim</div>
+                            <small class="text-muted">Tech Journalist</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary ms-auto">Follow</button>
+                    </div>
+                    <div class="suggested-writer">
+                        <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="Writer" class="writer-avatar">
+                        <div>
+                            <div class="fw-bold">Lisa Rodriguez</div>
+                            <small class="text-muted">Political Analyst</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary ms-auto">Follow</button>
+                    </div>
+                    <div class="suggested-writer">
+                        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Writer" class="writer-avatar">
+                        <div>
+                            <div class="fw-bold">Robert Chen</div>
+                            <small class="text-muted">Science Writer</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary ms-auto">Follow</button>
+                    </div>
+                    <a href="#" class="btn btn-link w-100 mt-2">See all</a>
+                </div>
+
+                <div class="widget-card">
+                    <h5><i class="fas fa-fire me-2"></i>Trending Topics</h5>
+                    <div class="mb-2">
+                        <span class="badge bg-primary me-1">#ClimateChange</span>
+                        <span class="badge bg-primary me-1">#Election2024</span>
+                        <span class="badge bg-primary me-1">#Tech</span>
+                        <span class="badge bg-primary me-1">#Health</span>
+                        <span class="badge bg-primary me-1">#Economy</span>
+                    </div>
+                    <a href="#" class="btn btn-link w-100">Explore more</a>
+                </div>
+
+                <div class="widget-card">
+                    <h5><i class="fas fa-robot me-2"></i>Fake News Verifier</h5>
+                    <p class="small text-muted">Paste text or URL to check for misinformation</p>
+                    <textarea class="form-control mb-2" rows="3" placeholder="Enter news text here..."></textarea>
+                    <button class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i> Verify Now
+                    </button>
+                </div>
+
+                <div class="widget-card">
+                    <h5><i class="fas fa-bullhorn me-2"></i>Announcements</h5>
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle me-2"></i> New verification tools coming next week!
+                    </div>
+                    <div class="alert alert-warning small">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Beware of fake news about upcoming tax changes.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPostModalLabel">Create News Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="postTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="postTitle" placeholder="Enter a clear, concise title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="postContent" class="form-label">Content</label>
+                            <textarea class="form-control" id="postContent" rows="5" placeholder="Write your news content here..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="postSources" class="form-label">Sources (comma separated)</label>
+                            <input type="text" class="form-control" id="postSources" placeholder="Enter your sources for verification">
+                        </div>
+                        <div class="mb-3">
+                            <label for="postTags" class="form-label">Tags</label>
+                            <input type="text" class="form-control" id="postTags" placeholder="Add relevant tags (e.g., #Politics, #Health)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Add Media</label>
+                            <div class="d-flex">
+                                <button class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-image me-1"></i> Image
+                                </button>
+                                <button class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-video me-1"></i> Video
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fas fa-link me-1"></i> Link
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="verifyPost">
+                            <label class="form-check-label" for="verifyPost">Request immediate verification</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Post News</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Button -->
+    <div class="chat-btn" id="chatButton">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span>Messages</span>
+            <button class="btn btn-sm btn-outline-secondary" id="closeChat">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-body">
+            <div class="d-flex flex-column">
+                <div class="message received">
+                    Hi there! Do you have a minute to discuss the recent climate report?
+                </div>
+                <div class="message sent">
+                    Sure, I just read it this morning. What specifically do you want to discuss?
+                </div>
+                <div class="message received">
+                    I'm trying to verify some claims about rising sea levels. Can you point me to your sources?
+                </div>
+            </div>
+        </div>
+        <div class="chat-footer">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Type a message...">
+                <button class="btn btn-primary" type="button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Chat functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatButton = document.getElementById('chatButton');
+            const chatWindow = document.getElementById('chatWindow');
+            const closeChat = document.getElementById('closeChat');
+            
+            chatButton.addEventListener('click', function() {
+                chatWindow.style.display = 'flex';
+            });
+            
+            closeChat.addEventListener('click', function() {
+                chatWindow.style.display = 'none';
+            });
+            
+            // Verification button functionality
+            const verifyButtons = document.querySelectorAll('.verify-btn');
+            verifyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const postCard = this.closest('.post-card');
+                    const verificationBox = postCard.querySelector('.verification-box');
+                    
+                    if (verificationBox) {
+                        verificationBox.style.display = verificationBox.style.display === 'none' ? 'block' : 'none';
+                    } else {
+                        // Create a new verification box if none exists
+                        const newVerificationBox = document.createElement('div');
+                        newVerificationBox.className = 'verification-box';
+                        newVerificationBox.innerHTML = `
+                            <h6><i class="fas fa-spinner fa-spin me-2"></i>Verifying...</h6>
+                            <p class="small">Our system is analyzing this content for accuracy.</p>
+                        `;
+                        
+                        // Insert after the post content
+                        const postContent = postCard.querySelector('.post-tags') || 
+                                           postCard.querySelector('img') || 
+                                           postCard.querySelector('p');
+                        postContent.after(newVerificationBox);
+                        
+                        // Simulate verification after a delay
+                        setTimeout(() => {
+                            newVerificationBox.innerHTML = `
+                                <h6><i class="fas fa-check-circle verified me-2"></i>Verified by Vartabaran</h6>
+                                <p class="small">This content appears to be accurate based on our preliminary analysis.</p>
+                                <div class="verification-result">
+                                    <i class="fas fa-check-circle verified verification-icon"></i>
+                                    <div>
+                                        <div class="fw-bold">87% Confidence</div>
+                                        <small class="text-muted">Based on source reliability and cross-verification</small>
+                                    </div>
+                                </div>
+                            `;
+                        }, 2000);
+                    }
+                });
+            });
+            
+            // Flag button functionality
+            const flagButtons = document.querySelectorAll('.flag-btn');
+            flagButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const postCard = this.closest('.post-card');
+                    const postAuthor = postCard.querySelector('.post-author').textContent;
+                    
+                    if (confirm(`Are you sure you want to flag this post by ${postAuthor} as potential misinformation?`)) {
+                        this.innerHTML = '<i class="fas fa-flag me-1"></i> Flagged';
+                        this.classList.remove('flag-btn');
+                        this.classList.add('btn-secondary');
+                        this.disabled = true;
+                        
+                        // Show confirmation toast
+                        const toast = document.createElement('div');
+                        toast.className = 'position-fixed bottom-0 end-0 p-3';
+                        toast.style.zIndex = '11';
+                        toast.innerHTML = `
+                            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="toast-header">
+                                    <strong class="me-auto">Vartabaran</strong>
+                                    <small>Just now</small>
+                                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                                <div class="toast-body">
+                                    Thank you for helping combat misinformation. Our team will review this post.
+                                </div>
+                            </div>
+                        `;
+                        document.body.appendChild(toast);
+                        
+                        // Remove toast after 5 seconds
+                        setTimeout(() => {
+                            toast.remove();
+                        }, 5000);
+                    }
+                });
+            });
+            
+            // Like button functionality
+            const likeButtons = document.querySelectorAll('.like-btn');
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const likeText = this.querySelector('span') || this.childNodes[2];
+                    let likeCount = parseInt(likeText.textContent.match(/\d+/)[0]);
+                    
+                    if (this.classList.contains('liked')) {
+                        likeCount--;
+                        this.classList.remove('liked');
+                        this.innerHTML = `<i class="fas fa-thumbs-up me-1"></i> Like (${likeCount})`;
+                    } else {
+                        likeCount++;
+                        this.classList.add('liked');
+                        this.innerHTML = `<i class="fas fa-thumbs-up me-1"></i> Liked (${likeCount})`;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

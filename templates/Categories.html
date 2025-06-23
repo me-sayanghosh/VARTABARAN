@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vartabaran - News Platform</title>
+    <style>
+        :root {
+            --bg-light: #f3f4f6;
+            --bg-dark: #1f2937;
+            --text-light: #111827;
+            --text-dark: #f9fafb;
+            --card-light: #ffffff;
+            --card-dark: #374151;
+            --primary-color: #2563eb;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.light {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        body.dark {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            padding: 0.5rem 1rem;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 5px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .featured-banner {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .featured-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .featured-image {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .category {
+            margin-bottom: 2rem;
+        }
+
+        .category h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .news-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .news-card {
+            background: var(--card-light);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-card h3 {
+            font-size: 1.2rem;
+            margin: 0.5rem;
+        }
+
+        .news-card p {
+            margin: 0.5rem;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="light">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">Vartabaran</h1>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Writers</a></li>
+                <li><a href="#">Categories</a></li>
+                <li><a href="#">Login</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </nav>
+
+    <!-- Featured Banner -->
+    <section class="featured-banner">
+        <div class="container">
+            <h2 class="featured-title">Breaking News: Major Developments in Technology</h2>
+            <img src="https://source.unsplash.com/random/1200x400/?technology" alt="Featured News" class="featured-image">
+        </div>
+    </section>
+
+    <!-- News Categories -->
+    <main class="container">
+        <section class="category" id="politics">
+            <h2>Politics</h2>
+            <div class="news-cards">
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?politics" alt="Politics News">
+                    <h3>New Policies Announced</h3>
+                    <p>Government unveils new policies aimed at improving the economy.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?politics" alt="Politics News">
+                    <h3>Election Results Are In</h3>
+                    <p>The results of the recent elections have been announced.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?politics" alt="Politics News">
+                    <h3>Debate Highlights</h3>
+                    <p>Highlights from the recent political debate.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="category" id="environment">
+            <h2>Environment</h2>
+            <div class="news-cards">
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?environment" alt="Environment News">
+                    <h3>Climate Change Initiatives</h3>
+                    <p>New initiatives launched to combat climate change.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?environment" alt="Environment News">
+                    <h3>Wildlife Conservation Efforts</h3>
+                    <p>Efforts to conserve endangered species are underway.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?environment" alt="Environment News">
+                    <h3>Pollution Levels Drop</h3>
+                    <p>Recent studies show a drop in pollution levels.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="category" id="technology">
+            <h2>Technology</h2>
+            <div class="news-cards">
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?technology" alt="Technology News">
+                    <h3>New AI Breakthrough</h3>
+                    <p>Researchers have made a significant breakthrough in AI technology.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?technology" alt="Technology News">
+                    <h3>Latest Smartphone Release</h3>
+                    <p>The latest smartphone has been released with innovative features.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?technology" alt="Technology News">
+                    <h3>Cybersecurity Threats</h3>
+                    <p>Experts warn about rising cybersecurity threats.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="category" id="health">
+            <h2>Health</h2>
+            <div class="news-cards">
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?health" alt="Health News">
+                    <h3>New Vaccine Approved</h3>
+                    <p>A new vaccine has been approved for public use.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?health" alt="Health News">
+                    <h3>Healthy Living Tips</h3>
+                    <p>Experts share tips for a healthier lifestyle.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?health" alt="Health News">
+                    <h3>Mental Health Awareness</h3>
+                    <p>Raising awareness about mental health issues.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="category" id="sports">
+            <h2>Sports</h2>
+            <div class="news-cards">
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?sports" alt="Sports News">
+                    <h3>Championship Highlights</h3>
+                    <p>Highlights from the recent championship games.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?sports" alt="Sports News">
+                    <h3>Player Transfers</h3>
+                    <p>Latest news on player transfers in the league.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?sports" alt="Sports News">
+                    <h3>Upcoming Matches</h3>
+                    <p>Schedule for the upcoming matches this week.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="category" id="education">
+            <h2>Education</h2>
+            <div class="news-cards">
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?education" alt="Education News">
+                    <h3>New Curriculum Changes</h3>
+                    <p>Changes to the curriculum have been announced for next year.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?education" alt="Education News">
+                    <h3>Online Learning Trends</h3>
+                    <p>Exploring the latest trends in online learning.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?education" alt="Education News">
+                    <h3>Scholarship Opportunities</h3>
+                    <p>New scholarship opportunities available for students.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="category" id="culture">
+            <h2>Culture & Society</h2>
+            <div class="news-cards">
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?culture" alt="Culture News">
+                    <h3>Art Exhibition Opens</h3>
+                    <p>A new art exhibition opens this weekend.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?culture" alt="Culture News">
+                    <h3>Festival Celebrations</h3>
+                    <p>Details on the upcoming festival celebrations.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="news-card">
+                    <img src="https://source.unsplash.com/random/300x200/?culture" alt="Culture News">
+                    <h3>New Cultural Insights</h3>
+                    <p>Exploring new insights into cultural practices.</p>
+                    <a href="#" class="read-more">Read More</a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            document.body.classList.toggle('light');
+        }
+    </script>
+</body>
+</html>

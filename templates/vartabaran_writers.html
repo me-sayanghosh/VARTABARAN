@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vartabaran Writers</title>
+  <style>
+    :root {
+      --bg-light: #f3f4f6;
+      --card-light: #ffffff;
+      --text-light: #111827;
+      --subtext-light: #6b7280;
+
+      --bg-dark: #1f2937;
+      --card-dark: #374151;
+      --text-dark: #f9fafb;
+      --subtext-dark: #d1d5db;
+
+      --btn-blue: #2563eb;
+    }
+
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 2rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.light {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+    }
+
+    .top-bar, .filter-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+
+    .writers-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .writer-card {
+      position: relative;
+      padding: 1.5rem;
+      border-radius: 16px;
+      transition: transform 0.2s;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    body.light .writer-card {
+      background-color: var(--card-light);
+    }
+
+    body.dark .writer-card {
+      background-color: var(--card-dark);
+    }
+
+    .writer-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .writer-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 9999px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .writer-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .article-count {
+      font-size: 0.95rem;
+      margin-top: 0.4rem;
+    }
+
+    .writer-details {
+      position: absolute;
+      bottom: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      background-color: inherit;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+      display: none;
+      text-align: left;
+    }
+
+    .writer-card:hover .writer-details {
+      display: block;
+    }
+
+    input[type="text"], select {
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 240px;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid currentColor;
+    }
+
+    .theme-toggle img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .auth-button {
+      background-color: var(--btn-blue);
+      color: white;
+      padding: 0.5rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="light">
+
+  <div class="top-bar">
+    <input type="text" id="searchInput" placeholder="Search writer..." oninput="filterAndRender()" />
+    <select id="sortSelect" onchange="filterAndRender()">
+      <option value="articles">Sort by Article Count</option>
+      <option value="date">Sort by Date Joined</option>
+      <option value="name">Sort by Name</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <img src="https://cdn-icons-png.flaticon.com/512/6714/6714978.png" alt="Toggle Theme Icon" />
+    </button>
+    <button class="auth-button" onclick="window.location.href='login.html'">Login / Sign Up</button>
+  </div>
+
+  <h1>Our Vartabaran Writers</h1>
+  <div class="writers-container" id="writers-container"></div>
+
+  <script>
+    const writers = [
+      {
+        name: "Arjun Sen",
+        bio: "Tech journalist with 5+ years in AI.",
+        articles: 43,
+        joined: "2021-01-15",
+        photo: "https://randomuser.me/api/portraits/men/12.jpg"
+      },
+      {
+        name: "Maya Das",
+        bio: "Writes about climate and policy.",
+        articles: 27,
+        joined: "2023-03-22",
+        photo: "https://randomuser.me/api/portraits/women/44.jpg"
+      },
+      {
+        name: "Ritvik Mukherjee",
+        bio: "Political analyst and reporter.",
+        articles: 55,
+        joined: "2020-06-10",
+        photo: "https://randomuser.me/api/portraits/men/31.jpg"
+      },
+      {
+        name: "Nisha Roy",
+        bio: "Covers youth culture and education.",
+        articles: 33,
+        joined: "2022-08-30",
+        photo: "https://randomuser.me/api/portraits/women/15.jpg"
+      }
+    ];
+
+    function filterAndRender() {
+      const searchInput = document.getElementById("searchInput").value.toLowerCase();
+      const sortBy = document.getElementById("sortSelect").value;
+
+      let filtered = writers.filter(w => w.name.toLowerCase().includes(searchInput));
+
+      if (sortBy === "articles") {
+        filtered.sort((a, b) => b.articles - a.articles);
+      } else if (sortBy === "date") {
+        filtered.sort((a, b) => new Date(b.joined) - new Date(a.joined));
+      } else if (sortBy === "name") {
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      const container = document.getElementById("writers-container");
+      container.innerHTML = "";
+      filtered.forEach(writer => {
+        const card = document.createElement("div");
+        card.className = "writer-card";
+        card.innerHTML = `
+          <img src="${writer.photo}" alt="${writer.name}" class="writer-photo" />
+          <div class="writer-name">${writer.name}</div>
+          <div class="article-count">${writer.articles} articles</div>
+          <div class="writer-details">
+            <strong>Bio:</strong><br> ${writer.bio}<br><br>
+            <strong>Joined:</strong> ${writer.joined}<br>
+            <strong>Articles:</strong> ${writer.articles}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      document.body.classList.toggle('light');
+    }
+
+    filterAndRender();
+  </script>
+</body>
+</html>
